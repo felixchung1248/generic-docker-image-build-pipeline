@@ -5,7 +5,6 @@ pipeline {
         // Define parameters that allow users to input the Docker image name and Git repository URL
         string(name: 'DOCKER_IMAGE', description: 'The name of the Docker image to build')
         string(name: 'GIT_REPO', description: 'The Git repository URL containing the Dockerfile')
-		string(name: 'GIT_BRANCH', description: 'The Git repository URL containing the Dockerfile')
     }
 
     stages {
@@ -28,7 +27,7 @@ pipeline {
         stage('Checkout code') {
             steps {
                 // Checkout the code from the specified Git repository and branch
-                git branch: env.GIT_BRANCH, url: env.GIT_REPO
+                git url: env.GIT_REPO
             }
         }
         
