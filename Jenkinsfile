@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                     // Log in to Docker registry
-                    docker.withRegistry("http://${env.DOCKER_REGISTRY}", env.DOCKER_REGISTRY_CREDENTIALS_ID) {
+                    docker.withRegistry("https://${env.DOCKER_REGISTRY}", env.DOCKER_REGISTRY_CREDENTIALS_ID) {
                         // Tag the image with the build number and latest
                         def dockerImage = docker.image("${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE}")
                         dockerImage.tag("latest")
