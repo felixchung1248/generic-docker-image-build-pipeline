@@ -40,7 +40,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image from the Dockerfile in the repository
-                    docker.build("${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}")
+                    docker.build("${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.BUILD_NUMBER}")
                 }
             }
         }
@@ -51,13 +51,9 @@ pipeline {
                     // Log in to Docker registry
                     docker.withRegistry("https://${env.DOCKER_REGISTRY}", env.DOCKER_REGISTRY_CREDENTIALS_ID) {
                         // Tag the image with the build number and latest
-                        def dockerImage = docker.image("${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}")
-                        dockerImage.tag("latest")
-                        dockerImage.tag("${env.BUILD_NUMBER}")
-                        
-                        // Push the tagged images to the registry
-                        dockerImage.push("latest")
-                        dockerImage.push("${env.BUILD_NUMBER}")
+                        def dockerImage = docker.image("${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.BUILD_NUMBER}")
+
+                        dockerImage.push()
                     }
                 }
             }
