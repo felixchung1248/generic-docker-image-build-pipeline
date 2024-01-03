@@ -5,6 +5,7 @@ pipeline {
         // Define parameters that allow users to input the Docker image name and Git repository URL
         string(name: 'DOCKER_IMAGE', description: 'The name of the Docker image to build')
         string(name: 'GIT_REPO', description: 'The Git repository URL containing the Dockerfile')
+		string(name: 'PROJECT_NAME', description: 'Target project name in Harbor')
     }
 
     stages {
@@ -19,6 +20,10 @@ pipeline {
                     // Check if the GIT_REPO parameter is provided
                     if (!params.GIT_REPO) {
                         error "The GIT_REPO parameter is missing. Please provide the Git repository URL containing the Dockerfile."
+                    }
+					
+					if (!params.PROJECT_NAME) {
+                        error "The PROJECT_NAME parameter is missing. Please provide the target Harbor project name for your built image."
                     }
                 }
             }
@@ -35,7 +40,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image from the Dockerfile in the repository
-                    docker.build("${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE}")
+                    docker.build("${env.DOCKER_REGISTRY}/${PROJECT_NAME}/${env.DOCKER_IMAGE}")
                 }
             }
         }
@@ -46,7 +51,7 @@ pipeline {
                     // Log in to Docker registry
                     docker.withRegistry("https://${env.DOCKER_REGISTRY}", env.DOCKER_REGISTRY_CREDENTIALS_ID) {
                         // Tag the image with the build number and latest
-                        def dockerImage = docker.image("${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE}")
+                        def dockerImage = docker.image("${env.DOCKER_REGISTRY}/${PROJECT_NAME}/${env.DOCKER_IMAGE}")
                         dockerImage.tag("latest")
                         dockerImage.tag("${env.BUILD_NUMBER}")
                         
