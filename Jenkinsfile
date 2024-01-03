@@ -3,8 +3,8 @@ pipeline {
 	
     parameters {
         // Define parameters that allow users to input the Docker image name and Git repository URL
-        string(name: 'DOCKER_IMAGE', defaultValue: 'my-image-name', description: 'The name of the Docker image to build')
-        string(name: 'GIT_REPO', defaultValue: 'https://github.com/username/repo.git', description: 'The Git repository URL containing the Dockerfile')
+        string(name: 'DOCKER_IMAGE', description: 'The name of the Docker image to build')
+        string(name: 'GIT_REPO', description: 'The Git repository URL containing the Dockerfile')
     }
 	
     environment {
