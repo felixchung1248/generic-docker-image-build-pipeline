@@ -5,7 +5,8 @@ pipeline {
         // Define parameters that allow users to input the Docker image name and Git repository URL
         string(name: 'DOCKER_IMAGE', description: 'The name of the Docker image to build')
         string(name: 'GIT_REPO', description: 'The Git repository URL containing the Dockerfile')
-		string(name: 'PROJECT_NAME', description: 'Target project name in Harbor')
+		string(name: 'PROJECT_NAME', description: 'Target project name in Docker registry')
+		string(name: 'DOCKER_TAG', description: 'The tags of the Docker image to build')
     }
 
     stages {
@@ -23,7 +24,11 @@ pipeline {
                     }
 					
 					if (!params.PROJECT_NAME) {
-                        error "The PROJECT_NAME parameter is missing. Please provide the target Harbor project name for your built image."
+                        error "The PROJECT_NAME parameter is missing. Please provide the target project name for your built image."
+                    }
+					
+					if (!params.DOCKER_TAG) {
+                        error "The DOCKER_TAG parameter is missing. Please provide the target project name for your built image."
                     }
                 }
             }
@@ -40,7 +45,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image from the Dockerfile in the repository
-                    docker.build("${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.BUILD_NUMBER}")
+                    docker.build("${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}")
                 }
             }
         }
@@ -51,7 +56,7 @@ pipeline {
                     // Log in to Docker registry
                     docker.withRegistry("https://${env.DOCKER_REGISTRY}", env.DOCKER_REGISTRY_CREDENTIALS_ID) {
                         // Tag the image with the build number and latest
-                        def dockerImage = docker.image("${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.BUILD_NUMBER}")
+                        def dockerImage = docker.image("${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}")
 
                         dockerImage.push()
                     }
