@@ -55,7 +55,7 @@ pipeline {
                 script {
                     // Scan the Docker image 
                     sh "docker pull aquasec/trivy"
-					sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy imageaquasec/trivy image ${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+					sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
                 }
             }
         }
