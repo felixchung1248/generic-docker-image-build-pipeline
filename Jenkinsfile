@@ -53,8 +53,10 @@ pipeline {
         stage('Push image') {
             steps {
                 script {
+					// Determine the Docker registry URL
+					def registryUrl = (env.DOCKER_REGISTRY == "docker.io") ? "" : "https://${env.DOCKER_REGISTRY}"
                     // Log in to Docker registry
-                    docker.withRegistry("https://${env.DOCKER_REGISTRY}", env.DOCKER_REGISTRY_CREDENTIALS_ID) {
+                    docker.withRegistry(registryUrl, env.DOCKER_REGISTRY_CREDENTIALS_ID) {
                         // Tag the image with the build number and latest
                         def dockerImage = docker.image("${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}")
 
