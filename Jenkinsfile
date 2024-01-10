@@ -49,6 +49,16 @@ pipeline {
                 }
             }
         }
+		
+		stage('Scan image') {
+            steps {
+                script {
+                    // Scan the Docker image 
+                    docker.image("aquasec/trivy")
+					docker.run("aquasec/trivy image ${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}")
+                }
+            }
+        }
 
         stage('Push image') {
             steps {
