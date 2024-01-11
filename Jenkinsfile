@@ -68,7 +68,7 @@ pipeline {
                 script {
                     // Scan the Docker image 
                     sh "docker pull aquasec/trivy"
-					sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/.cache:/root/.cache/ aquasec/trivy image --format template --template ${env.WORKSPACE}/html.tpl -o output.html ${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+					sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/.cache:/root/.cache/ aquasec/trivy image --timeout 15m --format template --template ${env.WORKSPACE}/html.tpl --output output.html ${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
                 }
             }
         }
