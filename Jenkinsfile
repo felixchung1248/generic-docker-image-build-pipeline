@@ -69,7 +69,7 @@ pipeline {
                     // Scan the Docker image 
                     sh "docker pull aquasec/trivy"
 					sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/.cache:/root/.cache/ aquasec/trivy image --timeout 15m --format template --template ${env.WORKSPACE}/html.tpl --output output.html ${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
-					sh "tree"
+					publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: env.WORKSPACE, reportFiles: 'output.html', reportName: 'Trivy Report', reportTitles: '', useWrapperFileDirectly: true])
                 }
             }
         }
@@ -89,12 +89,14 @@ pipeline {
                 }
             }
         }
+		
     }
 
     post {
         success {
-            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: env.WORKSPACE, reportFiles: 'output.html', reportName: 'Trivy Report', reportTitles: '', useWrapperFileDirectly: true])
-        }
+            echo 'Build or push success.'
+		}
+		
         failure {
             echo 'Build or push failed.'
         }
