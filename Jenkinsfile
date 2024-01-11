@@ -57,7 +57,7 @@ pipeline {
 					def buildContext = "${env.WORKSPACE}/git"
                     // Build the Docker image from the Dockerfile in the repository
 					dir(buildContext) {
-						docker.build("${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}", buildContext)
+						docker.build("${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}")
 					}
                 }
             }
