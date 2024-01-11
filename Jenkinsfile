@@ -100,9 +100,9 @@ pipeline {
         failure {
             echo 'Build or push failed.'
         }
-		always {
-            // Clean up the Docker images from the Jenkins agent
-            cleanWs()
-        }
+		//always {
+        //    // Clean up the Docker images from the Jenkins agent
+        //    cleanWs()
+        //}
     }
 }
