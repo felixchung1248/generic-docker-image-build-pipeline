@@ -68,8 +68,8 @@ pipeline {
                 script {
                     // Scan the Docker image 
                     sh "docker pull aquasec/trivy"
-					sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/.cache:/root/.cache/ aquasec/trivy image --timeout 15m --format template --template ${env.WORKSPACE}/html.tpl --output output.html ${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
-					publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: env.WORKSPACE, reportFiles: 'output.html', reportName: 'Trivy Report', reportTitles: '', useWrapperFileDirectly: true])
+					sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/.cache:/root/.cache/ -v ${env.WORKSPACE}:/result aquasec/trivy image --timeout 15m --format template --template \"@/result/html.tpl\" --output /result/output.html ${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+					publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: ${env.WORKSPACE}, reportFiles: 'output.html', reportName: 'Trivy Report', reportTitles: '', useWrapperFileDirectly: true])
                 }
             }
         }
