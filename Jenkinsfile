@@ -36,16 +36,23 @@ pipeline {
 		
         stage('Checkout code') {
             steps {
-                // Checkout the code from the specified Git repository and branch
-                git url: env.GIT_REPO
+				// Create a new temporary directory
+				def tempDir = "${env.WORKSPACE}/git"
+				sh "mkdir -p ${tempDir}"
+		
+				// Checkout the code into the temporary directory
+				dir(tempDir) {
+					git url: env.GIT_REPO
+				}
             }
         }
         
         stage('Build image') {
             steps {
                 script {
+					def buildContext = "${env.WORKSPACE}/git"
                     // Build the Docker image from the Dockerfile in the repository
-                    docker.build("${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}")
+                    docker.build("${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}", buildContext)
                 }
             }
         }
@@ -55,7 +62,7 @@ pipeline {
                 script {
                     // Scan the Docker image 
                     sh "docker pull aquasec/trivy"
-					sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/.cache:/root/.cache/ aquasec/trivy image --format html -o output.html ${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+					sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/.cache:/root/.cache/ aquasec/trivy image --format template --template "${env.WORKSPACE}/html.tpl" -o output.html ${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
                 }
             }
         }
