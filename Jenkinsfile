@@ -55,7 +55,7 @@ pipeline {
                 script {
                     // Scan the Docker image 
                     sh "docker pull aquasec/trivy"
-					sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+					sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/.cache:/root/.cache/ aquasec/trivy image --format html -o output.html ${env.DOCKER_REGISTRY}/${env.PROJECT_NAME}/${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
                 }
             }
         }
@@ -83,7 +83,7 @@ pipeline {
             cleanWs()
         }
         success {
-            echo 'Build and push succeeded!'
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: env.WORKSPACE, reportFiles: 'output.html', reportName: 'Trivy Report', reportTitles: '', useWrapperFileDirectly: true])
         }
         failure {
             echo 'Build or push failed.'
