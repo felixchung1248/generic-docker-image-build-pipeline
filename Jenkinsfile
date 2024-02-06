@@ -5,6 +5,7 @@ pipeline {
         // Define parameters that allow users to input the Docker image name and Git repository URL
         string(name: 'DOCKER_IMAGE', description: 'The name of the Docker image to build')
         string(name: 'GIT_REPO', description: 'The Git repository URL containing the Dockerfile')
+		string(name: 'BRANCH', description: 'The branch of your git repository')
 		string(name: 'PROJECT_NAME', description: 'Target project name in Docker registry')
 		string(name: 'DOCKER_TAG', description: 'The tags of the Docker image to build')
     }
@@ -30,6 +31,10 @@ pipeline {
 					if (!params.DOCKER_TAG) {
                         error "The DOCKER_TAG parameter is missing. Please provide the target project name for your built image."
                     }
+					
+					if (!params.BRANCH) {
+                        error "The BRANCH parameter is missing. Please provide the branch name for your git."
+                    }
                 }
             }
         }
@@ -45,7 +50,7 @@ pipeline {
 		
 					// Checkout the code into the temporary directory
 					dir(tempDir) {
-						git url: env.GIT_REPO
+						git url: env.GIT_REPO, branch: params.BRANCH
 					}
 				}
             }
